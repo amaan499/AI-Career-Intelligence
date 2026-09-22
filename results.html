@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI Career Report</title>
+
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+
+<style>
+/* ================= BASE ================= */
+
+body {
+    background: #f0f2f5;
+    font-family: "Segoe UI", sans-serif;
+    height: 100vh; /* Lock body height for dashboard feel */
+    overflow: hidden; /* Prevent double scrollbars */
+}
+
+.container-fluid {
+    padding-left: 30px;
+    padding-right: 30px;
+}
+
+/* ================= LAYOUT ================= */
+
+.main-layout {
+    display: flex;
+    gap: 25px;
+    align-items: stretch;
+    height: calc(100vh - 100px); /* Adjust based on navbar height */
+}
+
+.sidebar {
+    background: #fff;
+    border-radius: 16px;
+    padding: 25px;
+    width: 100%;
+    height: 100%; /* Fill parent */
+    display: flex;
+    flex-direction: column;
+    box-shadow: 0 4px 8px rgba(0,0,0,.05);
+}
+
+.jobs-section {
+    height: 100%; /* Fill parent */
+    display: flex;
+    flex-direction: column;
+}
+
+/* ================= SCROLL AREAS ================= */
+
+.sidebar-scroll {
+    overflow-y: auto;
+    padding-right: 5px;
+    flex-grow: 1; /* Allow it to fill remaining space */
+}
+
+.jobs-scroll {
+    overflow-y: auto;
+    padding-right: 10px;
+    flex-grow: 1; /* Allow it to fill remaining space */
+}
+
+/* ================= JOB CARD ================= */
+
+.job-card {
+    background: #fff;
+    border-radius: 14px;
+    padding: 25px;
+    margin-bottom: 20px;
+    border-left: 5px solid #4e54c8;
+    box-shadow: 0 3px 6px rgba(0,0,0,.06);
+    transition: 0.2s ease;
+}
+
+.job-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 15px rgba(0,0,0,0.1);
+}
+
+/* ================= SKILLS ================= */
+
+.skills-box {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.skill-tag {
+    white-space: nowrap;
+    font-size: 13px;
+    padding: 6px 14px;
+    cursor: pointer;
+    transition: transform 0.2s;
+    display: inline-block;
+}
+
+.skill-tag:hover {
+    transform: scale(1.05);
+}
+
+/* ================= SCROLLBAR ================= */
+
+.sidebar-scroll::-webkit-scrollbar,
+.jobs-scroll::-webkit-scrollbar {
+    width: 7px;
+}
+
+.sidebar-scroll::-webkit-scrollbar-thumb,
+.jobs-scroll::-webkit-scrollbar-thumb {
+    background: #c1c1c1;
+    border-radius: 4px;
+}
+
+.sidebar-scroll::-webkit-scrollbar-track,
+.jobs-scroll::-webkit-scrollbar-track {
+    background: #f1f1f1;
+}
+
+/* ================= RESPONSIVE ================= */
+
+@media (max-width: 992px) {
+    body { height: auto; overflow: auto; } /* Unlock scroll on mobile */
+    
+    .main-layout {
+        flex-direction: column;
+        height: auto;
+    }
+
+    .sidebar,
+    .jobs-section {
+        height: auto;
+    }
+
+    .jobs-scroll {
+        max-height: none;
+    }
+}
+</style>
+</head>
+
+<body>
+
+<nav class="navbar navbar-dark bg-dark px-4 py-3">
+    <span class="navbar-brand fw-bold"><i class="fas fa-robot me-2"></i>AI Resume Intelligence</span>
+    <a href="/" class="btn btn-outline-light btn-sm rounded-pill px-4">Upload New Resume</a>
+</nav>
+
+<div class="container-fluid mt-4">
+
+    <div class="main-layout">
+
+        <div class="col-lg-4 col-md-5">
+
+            <div class="sidebar">
+
+                <div class="text-center mb-3">
+                    <h6 class="text-muted fw-bold letter-spacing-1">ATS RESUME SCORE</h6>
+
+                    {% set score_color = 'success' if analysis.ats_score >= 80 else 'warning' if analysis.ats_score >= 50 else 'danger' %}
+
+                    <div class="border border-5 border-{{ score_color }} text-{{ score_color }}"
+                        style="width:120px;height:120px;border-radius:50%;display:flex;align-items:center;justify-content:center;margin:auto;">
+                        <div>
+                            <h2 class="fw-bold mb-0 display-5">{{ analysis.ats_score }}</h2>
+                            <small class="fw-bold fs-6">/100</small>
+                        </div>
+                    </div>
+
+                    <div class="badge bg-light text-secondary border px-3 py-2 rounded-pill mt-3">
+                        <i class="fas fa-check-circle me-1"></i> Analysis Complete
+                    </div>
+                </div>
+
+                <hr class="opacity-25">
+
+                <div class="sidebar-scroll">
+
+                    {% if analysis.ats_feedback %}
+                    <div class="alert alert-light border small shadow-sm">
+                        <strong class="text-warning text-uppercase"><i class="fas fa-lightbulb me-1"></i> Improvements:</strong>
+                        <ul class="mb-0 mt-2 ps-3 text-secondary">
+                            {% for tip in analysis.ats_feedback %}
+                                <li class="mb-1">{{ tip }}</li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                    {% endif %}
+
+                    <div class="d-flex justify-content-between align-items-center mt-4 mb-2">
+                        <h6 class="fw-bold text-muted mb-0">Detected Skills</h6>
+                        <span class="badge bg-dark rounded-pill">{{ analysis.skills_list|length }}</span>
+                    </div>
+
+                    <div class="skills-box mb-4">
+                        {% for skill in analysis.skills_list %}
+                            {% set colors = ['primary','success','info','secondary','dark','danger'] %}
+                            {% set c = colors | random %}
+                            
+                            <a href="/search?query={{ skill }}" class="text-decoration-none">
+                                <span class="badge bg-{{ c }} bg-opacity-10 text-{{ c }} border border-{{ c }} skill-tag">
+                                    {{ skill }}
+                                </span>
+                            </a>
+                        {% endfor %}
+                    </div>
+
+                    {% if analysis.projects %}
+                    <h6 class="fw-bold text-muted mb-2">Extracted Projects</h6>
+                        {% for project in analysis.projects %}
+                        <div class="border-start border-3 border-warning bg-light p-3 mb-2 rounded shadow-sm">
+                            <strong class="small d-block text-dark"><i class="fas fa-folder-open text-warning me-2"></i>{{ project.title }}</strong>
+                            <div class="small text-muted mt-1 fst-italic">{{ project.description }}</div>
+                        </div>
+                        {% endfor %}
+                    {% endif %}
+
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-8 col-md-7">
+
+            <div class="jobs-section">
+
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <h4 class="fw-bold mb-0"><i class="fas fa-briefcase me-2 text-primary"></i>Live Job Matches</h4>
+                    <div>
+                        <span class="badge bg-success shadow-sm">Real-Time</span>
+                        <span class="badge bg-secondary shadow-sm">{{ jobs|length }} Jobs</span>
+                    </div>
+                </div>
+
+                <div class="jobs-scroll">
+
+                    {% if jobs %}
+                        {% for job in jobs %}
+                        <div class="job-card position-relative">
+                            <div class="row g-3 align-items-center">
+                                <div class="col-md-9">
+                                    <h5 class="fw-bold text-primary mb-1">
+                                        <a href="{{ job.url }}" target="_blank" class="text-decoration-none text-primary stretched-link">
+                                            {{ job.title }}
+                                        </a>
+                                    </h5>
+                                    <div class="fw-bold text-dark">{{ job.company }}</div>
+                                    <div class="text-muted small mb-2">
+                                        <i class="fas fa-map-marker-alt text-danger me-1"></i> {{ job.location }}
+                                    </div>
+                                    <p class="small text-muted mb-0">{{ job.description }}</p>
+                                </div>
+
+                                <div class="col-md-3 d-flex align-items-center justify-content-end">
+                                    <span class="btn btn-dark rounded-pill px-4 btn-sm fw-bold">
+                                        Apply <i class="fas fa-external-link-alt ms-1"></i>
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    {% else %}
+                        <div class="text-center p-5 mt-4 rounded-4 bg-white shadow-sm">
+                            <i class="fas fa-search fa-3x text-info opacity-50 mb-3"></i>
+                            <h4 class="fw-bold">No jobs found for this skill.</h4>
+                            <p class="text-muted">Try clicking a different skill tag or updating your filters.</p>
+                            <a href="/" class="btn btn-outline-primary rounded-pill mt-2">New Scan</a>
+                        </div>
+                    {% endif %}
+
+                    <div class="text-center py-4 text-muted small opacity-50">
+                        -- End of Results --
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+</body>
+</html>

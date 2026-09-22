@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Career Architect</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        body { background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%); min-height: 100vh; display: flex; align-items: center; }
+        .card { border: none; border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); }
+        .btn-upload { background: #4e54c8; background: -webkit-linear-gradient(to right, #8f94fb, #4e54c8); background: linear-gradient(to right, #8f94fb, #4e54c8); border: none; }
+        .btn-upload:hover { transform: translateY(-2px); box-shadow: 0 5px 15px rgba(78, 84, 200, 0.4); }
+        .form-control:focus, .form-select:focus { border-color: #4e54c8; box-shadow: 0 0 0 0.2rem rgba(78, 84, 200, 0.25); }
+    </style>
+</head>
+<body>
+    <div class="container py-5">
+        <div class="row justify-content-center">
+            <div class="col-md-8">
+                <div class="card p-5">
+                    <div class="text-center mb-4">
+                        <i class="fas fa-robot fa-3x text-primary mb-3"></i>
+                        <h2 class="fw-bold text-dark">AI Resume Intelligence</h2>
+                        <p class="text-muted">Upload your CV and set your preferences to find the perfect job.</p>
+                    </div>
+                    
+                    <form action="/process" method="post" enctype="multipart/form-data">
+                        
+                        <div class="mb-4 border border-2 border-dashed rounded p-4 bg-light text-center">
+                            <i class="fas fa-cloud-upload-alt fa-2x text-secondary mb-2"></i>
+                            <label for="resume" class="form-label fw-bold d-block">Upload Resume (PDF)</label>
+                            <input type="file" id="resume" name="resume" class="form-control" accept=".pdf" required>
+                        </div>
+
+                        <div class="row g-3 mb-4">
+                            <div class="col-md-6">
+                                <label class="form-label fw-bold"><i class="fas fa-map-marker-alt me-1"></i> Preferred City</label>
+                                <input type="text" name="city" class="form-control" placeholder="e.g. London, New York, Mumbai">
+                            </div>
+                            
+                            <div class="col-md-6">
+                                <label class="form-label fw-bold"><i class="fas fa-briefcase me-1"></i> Job Type</label>
+                                <select name="contract_type" class="form-select" aria-label="Job Type">
+                                    <option value="">Any Type</option>
+                                    <option value="permanent">Full Time / Permanent</option>
+                                    <option value="contract">Contract / Temporary</option>
+                                    <option value="internship">Internship</option>
+                                </select>
+                            </div>
+
+                            <div class="col-md-12">
+                                <div class="form-check form-switch p-3 border rounded bg-white">
+                                    <input class="form-check-input" type="checkbox" id="remoteCheck" name="is_remote">
+                                    <label class="form-check-label fw-bold ms-2" for="remoteCheck">
+                                        <i class="fas fa-laptop-house me-1 text-success"></i> Only show Remote / Work from Home jobs
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <button type="submit" class="btn btn-primary btn-upload btn-lg w-100 py-3 rounded-pill fw-bold">
+                            Analyze & Find Jobs <i class="fas fa-arrow-right ms-2"></i>
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
